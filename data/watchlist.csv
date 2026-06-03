@@ -1,0 +1,3 @@
+use_by_agent,ticker,mode,shares,avg_price,manual_position_size,notes
+true,AAPL,Both,0,0,,Starter row; edit or delete
+false,MSFT,Investor,0,0,,Starter row; edit or delete
