@@ -1,8 +1,6 @@
 """Mock fallback provider. Values are labeled unavailable, not fabricated live facts."""
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
-import numpy as np
 import pandas as pd
 
 from .base import BaseProvider, DATA_UNAVAILABLE, ProviderResult
@@ -38,11 +36,11 @@ class MockProvider(BaseProvider):
         )
 
     def ohlcv(self, ticker: str, timeframe: str) -> tuple[pd.DataFrame, ProviderResult]:
-        now = datetime.now(timezone.utc)
-        dates = [now - timedelta(days=i) for i in range(90)][::-1]
-        # Minimal non-financial placeholder series so charts remain usable and visibly labeled fallback.
-        base = np.linspace(100, 100, len(dates))
-        frame = pd.DataFrame({"datetime": dates, "open": base, "high": base, "low": base, "close": base, "volume": 0})
+        # Never return synthetic prices for OHLCV fallback: an empty frame prevents
+        # downstream indicators, support/resistance, scores, and charts from being
+        # computed from invented market data.
+        columns = ["datetime", "open", "high", "low", "close", "volume"]
+        frame = pd.DataFrame(columns=columns)
         return frame, ProviderResult(status="Mock fallback only - live OHLCV unavailable", sources=[make_source(self.name, "local mock_provider.py")])
 
     def profile(self, ticker: str) -> ProviderResult:
